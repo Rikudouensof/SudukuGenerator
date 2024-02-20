@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SudukuGenerator.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -7,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace SudukuGenerator.Services
 {
-    
+
 
     public class SudukuGeneratorService
     {
         int[,] mat;
+        int[,] solution;
         int N; // number of columns/rows.
         int SRN; // square root of N
         int K; // No. Of missing digits
@@ -27,6 +29,8 @@ namespace SudukuGenerator.Services
             SRN = (int)SRNd;
 
             mat = new int[N, N];
+            solution = new int[N, N];
+
         }
 
         // Sudoku Generator
@@ -37,7 +41,7 @@ namespace SudukuGenerator.Services
 
             // Fill remaining blocks
             fillRemaining(0, SRN);
-
+            
             // Remove Randomly K digits to make game
             removeKDigits();
         }
@@ -78,6 +82,7 @@ namespace SudukuGenerator.Services
                     while (!unUsedInBox(row, col, num));
 
                     mat[row + i, col + j] = num;
+                    solution[row + i, col + j] = num;
                 }
             }
         }
@@ -154,10 +159,12 @@ namespace SudukuGenerator.Services
                 if (CheckIfSafe(i, j, num))
                 {
                     mat[i, j] = num;
+                    solution[i, j] = num;
                     if (fillRemaining(i, j + 1))
                         return true;
 
                     mat[i, j] = 0;
+                    solution[i, j] = 0;
                 }
             }
             return false;
@@ -189,21 +196,33 @@ namespace SudukuGenerator.Services
         }
 
         // Print sudoku
-        public int[,] generateSudoku()
+        public PuzzleAndSolution generateSudoku()
         {
-            int[,] sudukuArray = new int[9,9];
-            for (int i = 0; i < N; i++)
+            //int[,] sudukuArray = new int[9, 9];
+            //for (int i = 0; i < N; i++)
+            //{
+            //    for (int j = 0; j < N; j++)
+            //    {
+            //        sudukuArray[i, j] = mat[i, j];
+            //    }
+
+            //}
+            
+            var response = new PuzzleAndSolution()
             {
-                for (int j = 0; j < N; j++)
-                {
-                    sudukuArray[i, j] = mat[i, j];
-                }
-                   
-            }
-            return sudukuArray;
+                Quiz = mat,
+                Solution = solution
+            };
+            return response;
         }
 
-       
+
+
+
     }
+
+
+
+   
 
 }

@@ -16,7 +16,7 @@ namespace SudukuGenerator.Services
     {
 
 
-        public string ConvertSudukuMatrixToHtml(int[,] input, string level)
+        public string ConvertSudukuMatrixToHtml(int[,] input, string level, int quizNumber)
         {
             var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string htmlPath = Path.Combine(basePath, @"Resources\SudukuHtmlTemplate.html");
@@ -28,7 +28,7 @@ namespace SudukuGenerator.Services
                 for (int j = 0; j < 9; j++)
                 {
                     // Calculate the product of i and j
-                    int value = input[i,j];
+                    int value = input[i, j];
 
                     // Display the product with proper formatting
                     string inputValue = "";
@@ -37,11 +37,12 @@ namespace SudukuGenerator.Services
                         inputValue = value.ToString();
                     }
 
-                  html =  html.Replace($"[{count}]", inputValue);
+                    html = html.Replace($"[{count}]", inputValue);
                     count++;
                 }
             }
             html = html.Replace($"[Level]", $"{level}");
+            html = html.Replace($"[QuizNumber]", $"{quizNumber}");
 
 
 
@@ -83,10 +84,16 @@ namespace SudukuGenerator.Services
             return level;
         }
 
-        public string ConvertHtmlStringToPdf(string html, string fileName)
+        public string ConvertHtmlStringToPdf(string html, string fileName, int type)
         {
             var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var pdfPath = Path.Combine(basePath, $"Resources\\PDFs\\{fileName}.pdf");
+            var pdfPath = Path.Combine(basePath, $"Resources\\PDFs\\Quiz\\{fileName}.pdf");
+            if (type == 1)
+            {
+                pdfPath = Path.Combine(basePath, $"Resources\\PDFs\\Solution\\{fileName}.pdf");
+            }
+           
+            
             string cssPath = "";
 
             HtmlToPdf converter = new HtmlToPdf();
@@ -110,5 +117,7 @@ namespace SudukuGenerator.Services
 
             return pdfPath;
         }
+
+        
     }
 }
